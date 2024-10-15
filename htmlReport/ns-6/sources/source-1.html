@@ -1,0 +1,221 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > HooverService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.hoover.service</a>
+</div>
+
+<h1>Coverage Summary for Class: HooverService (com.example.hoover.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HooverService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.5%
+  </span>
+  <span class="absValue">
+    (43/47)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.hoover.service;
+&nbsp;
+&nbsp;import com.example.hoover.dto.HooverRequest;
+&nbsp;import com.example.hoover.dto.HooverResponse;
+&nbsp;import com.example.hoover.model.Hoover;
+&nbsp;import com.example.hoover.model.Position;
+&nbsp;import com.example.hoover.model.Room;
+&nbsp;import com.example.hoover.util.MovementUtils;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class containing the logic to process Hoover instructions.
+&nbsp; */
+&nbsp;@Service
+<b class="fc">&nbsp;public class HooverService {</b>
+<b class="fc">&nbsp;    private static final Logger logger = LoggerFactory.getLogger(HooverService.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Processes the hoover instructions and returns the final position and cleaned patches.
+&nbsp;     *
+&nbsp;     * @param request The HooverRequest containing room size, initial position, dirt patches, and instructions.
+&nbsp;     * @return HooverResponse with final position and number of patches cleaned.
+&nbsp;     */
+&nbsp;    public HooverResponse processInstructions(HooverRequest request) {
+&nbsp;        // Log start of processing
+<b class="fc">&nbsp;        logger.info(&quot;Processing hoover instructions: {}&quot;, request);</b>
+&nbsp;
+&nbsp;        // Initialize Room
+<b class="fc">&nbsp;        int[] roomSize = {request.getRoomSize()[0], request.getRoomSize()[1]};</b>
+<b class="fc">&nbsp;        logger.debug(&quot;Initialized room size: {}&quot;, roomSize);</b>
+&nbsp;
+&nbsp;        // Validate room size
+<b class="fc">&nbsp;        if (roomSize[0] &lt;= 0 || roomSize[1] &lt;= 0) {</b>
+<b class="fc">&nbsp;            logger.error(&quot;Invalid room size: {}&quot;, roomSize);</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Room size must be positive integers.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Set&lt;Position&gt; dirtPatches = new HashSet&lt;&gt;();</b>
+&nbsp;        // Get the patches from the request
+<b class="fc">&nbsp;        List&lt;int[]&gt; patches = request.getPatches();</b>
+&nbsp;
+&nbsp;        // Iterate through each coordinate pair
+<b class="fc">&nbsp;        for (int[] coords : patches) {</b>
+<b class="fc">&nbsp;            Position position = new Position(coords[0], coords[1]);</b>
+<b class="fc">&nbsp;            dirtPatches.add(position);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Validate dirtPatches are within room
+<b class="fc">&nbsp;        for (Position patch : dirtPatches) {</b>
+<b class="fc">&nbsp;            if (!MovementUtils.isWithinRoom(patch, roomSize)) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Dirt patch at ({}, {}) is outside the room.&quot;, patch.getX(), patch.getY());</b>
+<b class="fc">&nbsp;                throw new IllegalArgumentException(&quot;Dirt patch at (&quot; + patch.getX() + &quot;, &quot; + patch.getY() + &quot;) is outside the room.&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        Room room = new Room(roomSize, dirtPatches);</b>
+<b class="fc">&nbsp;        logger.info(&quot;Initialized room with dirt patches.&quot;);</b>
+&nbsp;
+&nbsp;        // Initialize Hoover
+<b class="fc">&nbsp;        Position initialPos = new Position(request.getCoords()[0], request.getCoords()[1]);</b>
+<b class="fc">&nbsp;        logger.debug(&quot;Initial hoover position: {}&quot;, initialPos);</b>
+&nbsp;
+&nbsp;        // Validate initial position
+<b class="fc">&nbsp;        if (!MovementUtils.isWithinRoom(initialPos, roomSize)) {</b>
+<b class="fc">&nbsp;            logger.error(&quot;Initial hoover position ({}, {}) is outside the room.&quot;, initialPos.getX(), initialPos.getY());</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Initial hoover position (&quot; + initialPos.getX() + &quot;, &quot; + initialPos.getY() + &quot;) is outside the room.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Hoover hoover = new Hoover(initialPos, 0);</b>
+&nbsp;
+&nbsp;        // Check and clean the new position
+<b class="fc">&nbsp;        MovementUtils.checkAndCleanPosition(hoover, room, initialPos);</b>
+&nbsp;
+&nbsp;        // Validate instructions before processing
+<b class="fc">&nbsp;        MovementUtils.validateInstructions(request.getInstructions());</b>
+<b class="fc">&nbsp;        logger.info(&quot;Instructions validated successfully.&quot;);</b>
+&nbsp;
+&nbsp;        // Process Instructions
+<b class="fc">&nbsp;        for (char direction : request.getInstructions().toCharArray()) {</b>
+&nbsp;            Position newPos;
+&nbsp;            try {
+<b class="fc">&nbsp;                newPos = MovementUtils.move(hoover.getPosition(), direction);</b>
+<b class="fc">&nbsp;                logger.debug(&quot;Moved hoover in direction &#39;{}&#39;. New position: {}&quot;, direction, newPos);</b>
+<b class="nc">&nbsp;            } catch (IllegalArgumentException e) {</b>
+&nbsp;                // Invalid direction, log and skip to next instruction
+<b class="nc">&nbsp;                logger.warn(&quot;Invalid direction &#39;{}&#39;, skipping.&quot;, direction);</b>
+<b class="nc">&nbsp;                continue;</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;
+&nbsp;            // Check boundaries
+<b class="fc">&nbsp;            if (MovementUtils.isWithinRoom(newPos, roomSize)) {</b>
+<b class="fc">&nbsp;                hoover.setPosition(newPos);</b>
+<b class="fc">&nbsp;                logger.debug(&quot;Moved hoover within room boundaries to {}&quot;, newPos);</b>
+&nbsp;
+&nbsp;                // Clean dirt patch if present
+<b class="fc">&nbsp;                MovementUtils.checkAndCleanPosition(hoover, room, newPos);</b>
+&nbsp;            } else {
+&nbsp;                // Hoover skids (out of bounds), log this case
+<b class="nc">&nbsp;                logger.warn(&quot;Attempted to move hoover out of bounds to position {}, ignoring.&quot;, newPos);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Prepare Response
+<b class="fc">&nbsp;        HooverResponse response = new HooverResponse(hoover.getPosition().getX(),</b>
+<b class="fc">&nbsp;                hoover.getPosition().getY(),</b>
+<b class="fc">&nbsp;                hoover.getCleanedPatches());</b>
+<b class="fc">&nbsp;        logger.info(&quot;Finished processing instructions. Final response: {}&quot;, response);</b>
+&nbsp;
+<b class="fc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-10-16 13:30</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+com\example\hoover\exception\GlobalExceptionHandler.class
+com\example\hoover\controller\HooverController.class
+com\example\hoover\exception\GlobalExceptionHandler$ErrorResponse.class
+com\example\hoover\model\Room.class
+com\example\hoover\dto\HooverRequest.class
+com\example\hoover\dto\HooverResponse.class
+com\example\hoover\service\HooverService.class
+com\example\hoover\util\MovementUtils.class
+com\example\hoover\model\Hoover.class
+com\example\hoover\model\Position.class
+com\example\hoover\BackendHooverServiceApplication.class

@@ -1,0 +1,4 @@
+com\example\hoover\controller\HooverControllerTest.class
+com\example\hoover\BackendHooverServiceApplicationTests.class
+com\example\hoover\exception\GlobalExceptionHandlerTest.class
+com\example\hoover\service\HooverServiceTest.class

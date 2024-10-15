@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > MovementUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.hoover.util</a>
+</div>
+
+<h1>Coverage Summary for Class: MovementUtils (com.example.hoover.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MovementUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (16/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.hoover.util;
+&nbsp;
+&nbsp;import com.example.hoover.model.Hoover;
+&nbsp;import com.example.hoover.model.Position;
+&nbsp;import com.example.hoover.model.Room;
+&nbsp;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;/**
+&nbsp; * Utility class for handling movement directions.
+&nbsp; */
+<b class="nc">&nbsp;public class MovementUtils {</b>
+&nbsp;    // Define valid movement directions as a constant
+&nbsp;    public static final char NORTH = &#39;N&#39;;
+&nbsp;    public static final char SOUTH = &#39;S&#39;;
+&nbsp;    public static final char EAST = &#39;E&#39;;
+&nbsp;    public static final char WEST = &#39;W&#39;;
+&nbsp;
+&nbsp;    // Define valid movement directions
+<b class="fc">&nbsp;    private static final Set&lt;Character&gt; VALID_DIRECTIONS = new HashSet&lt;&gt;(Arrays.asList(NORTH, SOUTH, EAST, WEST));</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validates the movement instructions.
+&nbsp;     *
+&nbsp;     * @param instructions The string of movement instructions to validate.
+&nbsp;     * @throws IllegalArgumentException if any invalid direction is found in the instructions.
+&nbsp;     */
+&nbsp;    public static void validateInstructions(String instructions) {
+<b class="fc">&nbsp;        for (char direction : instructions.toCharArray()) {</b>
+<b class="fc">&nbsp;            if (!VALID_DIRECTIONS.contains(direction)) {</b>
+<b class="fc">&nbsp;                throw new IllegalArgumentException(&quot;Invalid direction: &quot; + direction);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the new position based on the current position and direction.
+&nbsp;     *
+&nbsp;     * @param current   The current position.
+&nbsp;     * @param direction The direction to move (&#39;N&#39;, &#39;S&#39;, &#39;E&#39;, &#39;W&#39;).
+&nbsp;     * @return The new position after movement.
+&nbsp;     * @throws IllegalArgumentException If the direction is invalid.
+&nbsp;     */
+&nbsp;    public static Position move(Position current, char direction) {
+<b class="fc">&nbsp;        switch (Character.toUpperCase(direction)) {</b>
+&nbsp;            case NORTH:
+<b class="fc">&nbsp;                return new Position(current.getX(), current.getY() + 1);</b>
+&nbsp;            case SOUTH:
+<b class="fc">&nbsp;                return new Position(current.getX(), current.getY() - 1);</b>
+&nbsp;            case EAST:
+<b class="fc">&nbsp;                return new Position(current.getX() + 1, current.getY());</b>
+&nbsp;            case WEST:
+<b class="fc">&nbsp;                return new Position(current.getX() - 1, current.getY());</b>
+&nbsp;            default:
+<b class="nc">&nbsp;                throw new IllegalArgumentException(&quot;Invalid direction: &quot; + direction);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the position is within the room boundaries.
+&nbsp;     *
+&nbsp;     * @param pos  The position to check.
+&nbsp;     * @param size The room size.
+&nbsp;     * @return true if within boundaries, false otherwise.
+&nbsp;     */
+&nbsp;    public static boolean isWithinRoom(Position pos, int[] size) {
+<b class="fc">&nbsp;        boolean isWithin = pos.getX() &gt;= 0 &amp;&amp; pos.getX() &lt;= size[0]</b>
+<b class="fc">&nbsp;                &amp;&amp; pos.getY() &gt;= 0 &amp;&amp; pos.getY() &lt;= size[1];</b>
+<b class="fc">&nbsp;        return isWithin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the current position is on a dirt patch and cleans it if needed.
+&nbsp;     *
+&nbsp;     * @param hoover   The hoover instance.
+&nbsp;     * @param room     The room containing dirt patches.
+&nbsp;     * @param position The current position of the hoover.
+&nbsp;     */
+&nbsp;    public static void checkAndCleanPosition(Hoover hoover, Room room, Position position) {
+&nbsp;        // Check if the current position is on a dirt patch
+<b class="fc">&nbsp;        if (room.getDirtPatches().contains(position)) {</b>
+<b class="fc">&nbsp;            hoover.incrementCleanedPatches();</b>
+<b class="fc">&nbsp;            room.getDirtPatches().remove(position);</b>
+&nbsp;            // Log the cleaning action
+<b class="fc">&nbsp;            System.out.println(&quot;Position &quot; + position + &quot; was on a dirt patch, cleaned 1 patch.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-10-16 13:30</div>
+</div>
+</body>
+</html>
